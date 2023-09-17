@@ -25,8 +25,8 @@ def save_data():
                 data['wind_direction'],
                 data['wind_speed_knot'],
                 data['precipitation_mm'],
-                data['temperature'],
-                data['pressure'],
+                data['temperature_c'],
+                data['pressure_mbar'],
                 data['humidity'],
             ),
         )
