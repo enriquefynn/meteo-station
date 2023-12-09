@@ -34,6 +34,25 @@ class Db:
 
         self.conn = conn
 
+    def insert_air_data(self, air_data):
+        cursor = self.conn.cursor()
+        cursor.execute(
+            """
+            INSERT INTO air_data (date, wind_direction, wind_speed_knot,
+            temperature, pressure, humidity)
+            VALUES (%s, %s, %s, %s, %s, %s)
+            """,
+            (
+                air_data['date'],
+                air_data['wind_direction'],
+                air_data['wind_speed_knot'],
+                air_data['temperature_c'],
+                air_data['pressure_mbar'],
+                air_data['humidity'],
+            ),
+        )
+        self.conn.commit()
+
     def get_latest_point(self):
         cursor = self.conn.cursor()
         cursor.execute(
@@ -42,12 +61,11 @@ class Db:
                 date,
                 wind_direction,
                 wind_speed_knot,
-                precipitation_mm,
                 temperature,
                 pressure,
                 humidity
             FROM 
-                data
+                air_data
             ORDER BY 
                 date DESC
             LIMIT 1;
@@ -66,12 +84,11 @@ class Db:
                 date_trunc('hour', date) AS hour,
                 AVG(wind_direction) AS avg_wind_direction,
                 AVG(wind_speed_knot) AS avg_wind_speed_knot,
-                SUM(precipitation_mm) AS total_precipitation_mm,
                 AVG(temperature) AS avg_temperature,
                 AVG(pressure) AS avg_pressure,
                 AVG(humidity) AS avg_humidity
             FROM 
-                data
+                air_data
             WHERE 
                 date >= %s AND date < %s
             GROUP BY 
@@ -99,7 +116,6 @@ class Db:
                 date_trunc('day', date) + interval '6 hour' * floor(date_part('hour', date)::integer / 6) AS six_hour_interval,
                 AVG(wind_direction) AS avg_wind_direction,
                 AVG(wind_speed_knot) AS avg_wind_speed_knot,
-                SUM(precipitation_mm) AS total_precipitation_mm,
                 AVG(temperature) AS avg_temperature,
                 AVG(pressure) AS avg_pressure,
                 AVG(humidity) AS avg_humidity

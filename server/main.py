@@ -1,39 +1,24 @@
 #!/usr/bin/env python
 
 from flask import Flask, request, jsonify
-
+from flask_cors import CORS
 from db import Db
 
 app = Flask(__name__)
+CORS(app)
 
 db = Db()
 
 
-@app.route('/save_data', methods=['POST'])
+@app.route('/save_air_data', methods=['POST'])
 def save_data():
     data = request.json
     try:
-        cursor = db.conn.cursor()
-        cursor.execute(
-            """
-            INSERT INTO data (date, wind_direction, wind_speed_knot,
-            precipitation_mm, temperature, pressure, humidity)
-            VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """,
-            (
-                data['date'],
-                data['wind_direction'],
-                data['wind_speed_knot'],
-                data['precipitation_mm'],
-                data['temperature_c'],
-                data['pressure_mbar'],
-                data['humidity'],
-            ),
-        )
-        db.conn.commit()
+        db.insert_air_data(data)
         return jsonify({'message': 'Data saved successfully!'}), 201
     except Exception as e:
         db.conn.rollback()
+        print("Error inserting data:", e)
         return jsonify({'error': str(e)}), 400
 
 
@@ -74,4 +59,4 @@ def get_monthly_data():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port='5080', debug=True)

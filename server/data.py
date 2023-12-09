@@ -7,10 +7,9 @@ class DataPoint:
         self.date = row[0].strftime('%Y-%m-%d %H:%M:%S')
         self.wind_direction = row[1]
         self.wind_speed_knot = row[2]
-        self.precipitation_mm = row[3]
-        self.temperature_c = row[4]
-        self.pressure_mbar = row[5]
-        self.humidity = row[6]
+        self.temperature_c = row[3]
+        self.pressure_mbar = row[4]
+        self.humidity = row[5]
 
     def json(self):
         return jsonify(self.__dict__)
@@ -21,10 +20,10 @@ class AggregatedDataPoint:
         self.date = row[0].strftime('%Y-%m-%d %H:%M:%S')
         self.avg_wind_direction = row[1]
         self.avg_wind_speed_knot = row[2]
-        self.total_precipitation_mm = row[3]
-        self.avg_temperature_c = row[4]
-        self.avg_pressure_mbar = row[5]
-        self.avg_humidity = row[6]
+        # self.total_precipitation_mm = row[3]
+        self.avg_temperature_c = row[3]
+        self.avg_pressure_mbar = row[4]
+        self.avg_humidity = row[5]
 
 
 def aggregated_data_point_json_vec(data: List[AggregatedDataPoint]):

@@ -1,20 +1,30 @@
 #!/usr/bin/env python
 
-from db import Db
+import os, sys
 
-db = Db()
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, parent_dir)
+
+import db
+
+db = db.Db()
 db.conn.cursor().execute(
     """
-        CREATE TABLE data (
-            date TIMESTAMP UNIQUE,
+        CREATE TABLE air_data (
+            date TIMESTAMP PRIMARY KEY NOT NULL,
             wind_direction smallint,
             wind_speed_knot smallint,
-            precipitation_mm smallint,
             temperature smallint,
             pressure smallint,
             humidity smallint
         );
-        CREATE INDEX idx_date ON data (date);
+        CREATE INDEX idx_air_data_date ON air_data(date);
+
+        CREATE TABLE precipitation_data (
+            precipitation_mm smallint NOT NULL,
+            date TIMESTAMP PRIMARY KEY NOT NULL
+        );
+        CREATE INDEX idx_precipitation_data_date ON precipitation_data(date);
     """
 )
 db.conn.commit()
